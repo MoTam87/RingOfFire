@@ -13,3 +13,22 @@
         object-fit: contain;
     }
 }
+
+.start-lable-box {
+    position: absolute;
+    right: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    bottom: 250px;
+
+    img {
+        width: 30%;
+        height: auto;
+        cursor: pointer;
+        &:hover {
+            filter: brightness(1.3);
+        }
+    }
+}
+
