@@ -2,8 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Game } from 'src/models/game';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+import { DocumentData, Firestore, collection, collectionData, doc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+
 
 
 
@@ -21,15 +22,26 @@ export class GameComponent  {
   currentCard: string | undefined = '';
   game! :  Game;
   firestore: Firestore = inject(Firestore)
-  game$: Observable<any[]> | undefined;
+  game$: Observable<DocumentData | undefined>;
+  firebase: any;
   
   
 
   constructor(public dialog: MatDialog) {
-    const aCollection = collection(this.firestore, 'games')
-    this.game$ = collectionData(aCollection);
+    
+    const aDoc = doc(this.firestore, 'games/GGNgwAYXJfjrXCKtoczF')
+    this.game$ = docData(aDoc);
+    
     console.log('game update', this.game$)
+
+    this.game$.subscribe( game=> {
+      console.log('game update', game)
+    })
   }
+
+  
+
+  
 
   ngOnInit() {
     this.newGame();
@@ -39,7 +51,8 @@ export class GameComponent  {
 
   newGame() {
     this.game = new Game();
-    console.log(this.game);
+    this.firebase.collection('games').add({'Hallo': 'Welt'})
+    // this.firebase.firestore().collection('games').add({'Hallo': 'Welt'})
   };
 
 
