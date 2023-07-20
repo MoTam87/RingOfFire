@@ -45,9 +45,11 @@ export class GameComponent  {
 
       const itemColletion = collection(this.firestore, 'games')
       
-      this.game$ = collectionData(itemColletion)
+      this.game$ = collectionData(itemColletion, { idField: params['id']})
+      
       this.game$.subscribe( game=> {
            console.log('game update', game)
+           
       })
       
     })
