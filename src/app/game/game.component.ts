@@ -2,8 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Game } from 'src/models/game';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
-import { DocumentData, Firestore, collection, collectionData, doc, docData } from '@angular/fire/firestore';
+import { DocumentData, Firestore, addDoc, collection, collectionData, doc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 
 
@@ -22,21 +23,15 @@ export class GameComponent  {
   currentCard: string | undefined = '';
   game! :  Game;
   firestore: Firestore = inject(Firestore)
-  game$: Observable<DocumentData | undefined>;
+  game$: Observable<DocumentData | undefined> | undefined;
   firebase: any;
+  newGames :string = "";
   
   
 
-  constructor(public dialog: MatDialog) {
-    
-    const aDoc = doc(this.firestore, 'games/GGNgwAYXJfjrXCKtoczF')
-    this.game$ = docData(aDoc);
-    
-    console.log('game update', this.game$)
-
-    this.game$.subscribe( game=> {
-      console.log('game update', game)
-    })
+  constructor(public dialog: MatDialog, private route: ActivatedRoute) {
+    // this.getGame()
+   
   }
 
   
@@ -45,15 +40,36 @@ export class GameComponent  {
 
   ngOnInit() {
     this.newGame();
-    
+    this.route.params.subscribe ((params) => {
+      console.log(params['id'])
+
+      const itemColletion = collection(this.firestore, 'games')
+      
+      this.game$ = collectionData(itemColletion)
+      this.game$.subscribe( game=> {
+           console.log('game update', game)
+      })
+      
+    })
     
   }
 
   newGame() {
     this.game = new Game();
-    this.firebase.collection('games').add({'Hallo': 'Welt'})
-    // this.firebase.firestore().collection('games').add({'Hallo': 'Welt'})
+    // this.addTodo()
   };
+
+  getGame() {
+   
+
+  }
+
+  // addTodo() {
+  //   const itemColletion = collection(this.firestore, 'games')
+  //   addDoc(itemColletion, this.game.toJson())
+    
+  //   this.getGame();
+  // }
 
 
   takeCard() {
