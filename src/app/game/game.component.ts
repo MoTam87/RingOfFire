@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Game } from 'src/models/game';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
-import { DocumentData, Firestore, addDoc, collection, collectionData, doc, docData } from '@angular/fire/firestore';
+import { DocumentData, Firestore, UpdateData , addDoc, collection, collectionData, doc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
@@ -26,6 +26,7 @@ export class GameComponent  {
   game$: Observable<DocumentData | undefined> | undefined;
   firebase: any;
   newGames :string = "";
+  gameId: string | undefined;
   
   
 
@@ -40,17 +41,22 @@ export class GameComponent  {
 
   ngOnInit() {
     this.newGame();
-    this.route.params.subscribe ((params) => {
-      console.log(params['id'])
+    this.route.params.subscribe ((params: any) => {
+      console.log(params.id)
 
-      const itemColletion = collection(this.firestore, 'games')
-      
-      this.game$ = collectionData(itemColletion, { idField: 'dblhzpZzjobaZlFCQeyo'})
-      
-      this.game$.subscribe( game=> {
-           console.log('game update', game)
-           
+      const gameColletion = collection(this.firestore, 'games');
+      const gameDoc = doc(gameColletion, params.id)
+      this.gameId = params.id
+      docData(gameDoc).subscribe((game: any) => {
+        console.log(game);
+        
+        this.game.currentPlayer = game.currentPlayer
+        this.game.playedCard = game.playedCard
+        this.game.players = game.players
+        this.game.stack = game.stack
       })
+      
+      
       
     })
     
@@ -93,13 +99,17 @@ export class GameComponent  {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogAddPlayerComponent)
-      
-    
-
     dialogRef.afterClosed().subscribe((name: string) => {
       if (name && name.length > 0) {
       this.game.players.push(name)
       }  
     });
+  }
+
+
+    saveGame () {
+    const gameColletion = collection(this.firestore, 'games');
+    const gameDoc = doc(gameColletion, this.gameId);
+     gameDoc.updateData(this.game.toJson())
   }
 }
