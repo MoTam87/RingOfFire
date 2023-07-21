@@ -3,6 +3,8 @@ export class Game {
     public stack :string[] = [];
     public playedCard :string[] = [];
     public currentPlayer :number = 0;
+    public currentCard: string | undefined = '';
+    public pickCardAnimation = false;
 
     
     constructor() {
@@ -21,7 +23,10 @@ export class Game {
             players: this.players,
             stack: this.stack,
             playedCard: this.playedCard,
-            currentPlayer: this.currentPlayer
+            currentPlayer: this.currentPlayer,
+            pickCardAnimation: this.pickCardAnimation,
+            currentCard: this.currentCard
+
         }
     }
     
